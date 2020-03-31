@@ -4,8 +4,8 @@
 const express = require('express');
 const router = express.Router();
 
-// ********* require Owner and Listing models in order to use them *********
-const Owner = require('../models/Owner.model');
+// ********* require User and Listing models in order to use them *********
+const User = require('../models/User.model');
 const Listing = require('../models/Listing.model');
 
 // ****************************************************************************************
@@ -58,7 +58,7 @@ router.post('/listings/:id/update', (req, res) => {
 
 router.get('/listings/:someListingId', (req, res) => {
   Listing.findById(req.params.someListingId)
-    .populate('owner')
+    .populate('user')
     .then(foundListing => res.status(200).json({ listing: foundListing }))
     .catch(err => next(err));
 });

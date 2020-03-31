@@ -2,31 +2,31 @@
 // APP NEEDS TO KNOW YOU CREATED A NEW ROUTE FILE, THAT'S THE ONLY WAY FOR IT TO KNOW WHICH ROUTES YOU WANT TO HIT
 
 const express = require('express');
-const ownerRouter = express.Router();
+const userRouter = express.Router();
 
-// ********* require owner model in order to use it for CRUD *********
-const owner = require('../models/Owner.model');
+// ********* require user model in order to use it for CRUD *********
+const user = require('../models/User.model');
 
 // ****************************************************************************************
-// POST route to create a new owner in the DB
+// POST route to create a new user in the DB
 // ****************************************************************************************
 
-// <form action="/owners" method="POST">
-ownerRouter.post('/owners', (req, res, next) => {
+// <form action="/users" method="POST">
+userRouter.post('/users', (req, res, next) => {
   console.log(req.body);
-  owner.create(req.body)
-    .then(ownerDoc => res.status(200).json(ownerDoc))
+  user.create(req.body)
+    .then(userDoc => res.status(200).json(userDoc))
     .catch(err => next(err));
 });
 
 // ****************************************************************************************
-// GET all owners from the DB
+// GET all users from the DB
 // ****************************************************************************************
 
-ownerRouter.get('/owners', (req, res, next) => {
-  owner.find() // <-- .find() method gives us always an ARRAY back
-    .then(ownersFromDB => res.status(200).json({ owners: ownersFromDB }))
+userRouter.get('/users', (req, res, next) => {
+  user.find() // <-- .find() method gives us always an ARRAY back
+    .then(usersFromDB => res.status(200).json({ users: usersFromDB }))
     .catch(err => next(err));
 });
 
-module.exports = ownerRouter;
+module.exports = userRouter;
