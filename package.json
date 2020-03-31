@@ -1,10 +1,10 @@
 {
-  "name": "books-with-seeds",
+  "name": "listings-with-seeds",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "DEBUG=books-with-seeds:* nodemon ./bin/www",
+    "dev": "DEBUG=listings-with-seeds:* nodemon ./bin/www",
     "dev-windows": "nodemon ./bin/www"
   },
   "dependencies": {
