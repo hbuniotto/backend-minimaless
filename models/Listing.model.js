@@ -6,12 +6,11 @@ const listingSchema = new Schema(
     // unless you are defining more than the "type" property, you don't have to use {} (see below)
     // firstName: {type: String, require: true}
     title: String,
-    brand: String,
-    size: ,
-    condition: ,
-    category: ,
-    color: { type: Schema.Types.ObjectId, ref: 'listingColor' },
-    ,
+    brand: String, // .ToUpperCase
+    size: { type: Schema.Types.ObjectId, ref: 'ListingSize' },
+    condition: { type: Schema.Types.ObjectId, ref: 'ListingCondition' },
+    category: { type: Schema.Types.ObjectId, ref: 'ListingCategory' },
+    color: { type: Schema.Types.ObjectId, ref: 'ListingColor' },
     description: String,
     // we want to reference users inside the listing model and for that we will use their IDs
     // this is telling us that in "user" property of each listing object, we will have

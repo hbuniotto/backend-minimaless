@@ -1,11 +1,12 @@
 // ROUTES FILE NEEDS TO BE REQUIRED IN THE APP.JS IN ORDER NOT TO GIVE 404
-// APP NEEDS TO KNOW YOU CREATED A NEW ROUTE FILE, THAT'S THE ONLY WAY FOR IT TO KNOW WHICH ROUTES YOU WANT TO HIT
+// APP NEEDS TO KNOW YOU CREATED A NEW ROUTE FILE, THAT'S THE ONLY WAY FOR IT 
+// TO KNOW WHICH ROUTES YOU WANT TO HIT
 
 const express = require('express');
 const router = express.Router();
 
 // ********* require User and Listing models in order to use them *********
-const User = require('../models/User.model');
+// const User = require('../models/User.model'); not using for now
 const Listing = require('../models/Listing.model');
 
 // ****************************************************************************************
@@ -37,7 +38,7 @@ router.get('/listings', (req, res) => {
 // <form action="/listings/{{this._id}}/delete" method="post">
 router.post('/listings/:listingId/delete', (req, res) => {
   Listing.findByIdAndRemove(req.params.listingId)
-    .then(() => res.json({ message: 'Successfully removed!' }))
+    .then(() => res.json({ message: 'Your listing has been removed.' }))
     .catch(err => next(err));
 });
 
@@ -62,5 +63,7 @@ router.get('/listings/:someListingId', (req, res) => {
     .then(foundListing => res.status(200).json({ listing: foundListing }))
     .catch(err => next(err));
 });
+
+// MISSING ROUTES TO REQUEST IMAGES
 
 module.exports = router;
