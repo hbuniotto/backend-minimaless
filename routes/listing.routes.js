@@ -16,7 +16,7 @@ const Listing = require('../models/Listing.model');
 // <form action="/listings" method="POST">
 router.post('/listings', (req, res) => {
   // console.log(req.body);
-  Listing.create(req.body)
+Listing.create(req.body)
     .then(listingDoc => res.status(200).json({ listing: listingDoc }))
     .catch(err => next(err));
 });
