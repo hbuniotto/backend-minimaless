@@ -1,10 +1,12 @@
 require('dotenv').config();
 
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
+const passportLocal =  require ("passport-local"); // this is on the checklist for Auth Set Up for passport
 const favicon = require('serve-favicon');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+const connectMongo = require ("connect-mongo") // do I need this?
 const logger = require('morgan');
 const path = require('path');
 
@@ -38,9 +40,10 @@ app.locals.title = 'Express - Generated with IronGenerator';
 //      |  |  |
 //      |  |  |
 //      V  V  V
-app.use('/', require('./routes/index.routes'));
-app.use('/', require('./routes/user.routes'));
-app.use('/', require('./routes/listing.routes'));
-app.use('/', require('./routes/authentication.routes'));
+app.use('/api', require('./routes/index.routes'));
+app.use('/api', require('./routes/user.routes'));
+app.use('/api', require('./routes/listing.routes'));
+app.use('/api', require('./routes/booking.routes'));
+app.use('/api', require('./routes/authentication.routes'));
 
 module.exports = app;

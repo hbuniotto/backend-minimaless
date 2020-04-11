@@ -12,18 +12,18 @@ const user = require('../models/User.model');
 // ****************************************************************************************
 
 // <form action="/users" method="POST">
-userRouter.post('/users', (req, res, next) => {
+userRouter.post('/users', (req, res, next) => { // WORKS!
   console.log(req.body);
   user.create(req.body)
     .then(userDoc => res.status(200).json(userDoc))
-    .catch(err => next(err));
+    .catch(err => console.log('userRouter.post error', err));
 });
 
 // ****************************************************************************************
 // GET all users from the DB
 // ****************************************************************************************
 
-userRouter.get('/users', (req, res, next) => {
+userRouter.get('/users', (req, res, next) => { // WORKS!
   user.find() // <-- .find() method gives us always an ARRAY back
     .then(usersFromDB => res.status(200).json({ users: usersFromDB }))
     .catch(err => next(err));

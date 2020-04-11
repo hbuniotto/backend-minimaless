@@ -12,11 +12,11 @@ const routeGuard = require('../configs/route-guard.config');
 
 // .post() route ==> to process form data
 router.post('/signup', (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { email, password } = req.body; // removed username
 
-  if (!username || !email || !password) {
+  if (!email || !password) { // removed username
     res.status(401).json({
-      message: 'All fields are mandatory. Please provide your username, email and password.'
+      message: 'Email and password are mandatory.'
     });
     return;
   }
@@ -25,7 +25,7 @@ router.post('/signup', (req, res, next) => {
   if (!regex.test(password)) {
     res.status(500).json({
       message:
-        'Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.'
+        'Password must have at least 6 characters, a number, a lowercase and an uppercase letter.'
     });
     return;
   }

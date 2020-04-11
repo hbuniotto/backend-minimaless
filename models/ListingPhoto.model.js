@@ -5,7 +5,7 @@ const listingPhotoSchema = new Schema(
   {
     url: String,
     cover: Boolean,
-    listing: { type: Schema.Types.ObjectId, ref: "listing" }
+    // listing: { type: Schema.Types.ObjectId, ref: "listing" } // may not need it - need to test in postman
   },
   {
     timestamps: true
