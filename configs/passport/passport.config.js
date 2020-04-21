@@ -1,9 +1,11 @@
-const passport = require('passport');
+// USED PASSPORT JWT INSTEAD
 
-require('./local-strategy.config');
-require('./serializers.config');
+// const passport = require('passport');
 
-module.exports = app => {
-  app.use(passport.initialize()); // this "fires" the passport package
-  app.use(passport.session()); // connects passport to sessions
-};
+// require('./local-strategy.config');
+// require('./serializers.config');
+
+// module.exports = app => {
+//   app.use(passport.initialize()); // this "fires" the passport package
+//   app.use(passport.session()); // connects passport to sessions
+// };

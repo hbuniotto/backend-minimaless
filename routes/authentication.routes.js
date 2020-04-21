@@ -2,97 +2,141 @@ const { Router } = require('express');
 
 const router = new Router();
 
-const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const saltRounds = 10;
 const passport = require('passport');
 const User = require('../models/User.model');
 
-const routeGuard = require('../configs/route-guard.config');
+const Validator = require('validator');
 
-// .post() route ==> to process form data
-router.post('/signup', (req, res, next) => {
-  const { email, password } = req.body; // removed username
+// @route   POST api/signup
+// @desc    signup user
+// @access  Public
 
-  if (!email || !password) { // removed username
+router.post('/signup', (req, res ) => {
+  const { email, password } = req.body; 
+
+  if (!email || !password) {
     res.status(401).json({
       message: 'Email and password are mandatory.'
     });
     return;
   }
 
+  if (!Validator.isEmail(email)) {
+    res.status(401).json({
+      message: 'Email is invalid'
+    });
+    return;
+  }
+
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
   if (!regex.test(password)) {
-    res.status(500).json({
+    res.status(400).json({
       message:
         'Password must have at least 6 characters, a number, a lowercase and an uppercase letter.'
     });
     return;
   }
 
-  bcryptjs
-    .genSalt(saltRounds)
-    .then(salt => bcryptjs.hash(password, salt))
-    .then(hashedPassword => {
-      return User.create({
-        username,
-        email,
-        passwordHash: hashedPassword
-      })
-        .then(user => {
-          // user.passwordHash = undefined;
-          // res.status(200).json({ user });
-          req.login(user, err => {
-            if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
-            user.passwordHash = undefined;
-            res.status(200).json({ message: 'Login successful!', user });
-          });
-        })
-        .catch(err => {
-          if (err instanceof mongoose.Error.ValidationError) {
-            res.status(500).json({ message: err.message });
-          } else if (err.code === 11000) {
-            res.status(500).json({
-              message: 'Username and email need to be unique. Either username or email is already used.'
-            });
-          } else {
-            next(err);
+  User.findOne({ email: req.body.email })
+    .then(user => {
+    if (user) {
+      return res.status(400).json({ message:'Email already exists' });
+    } else {
+
+      const newUser = new User({
+        email: req.body.email,
+        password: req.body.password
+      });
+
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+          if (err) {
+            return res.status(400).json({ message:'something is wrong' });
           }
+          newUser.password = hash;
+
+          newUser
+            .save()
+            .then(user => {
+              const payload = { id: user.id, email: user.email };
+              // Sign Token
+              jwt.sign(
+                payload,
+                'keys.secretOrKey',
+                { expiresIn: 60 * 60 * 24 }, // 24 HOURS
+                (err, token) => {
+                  res.json({
+                    success: true,
+                    token: 'Bearer ' + token 
+                  });
+                }
+              );
+            })
+            .catch(err => console.log(err));
         });
-    })
-    .catch(err => next(err));
+      });
+    }
+  });
 });
 
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, failureDetails) => {
-    if (err) {
-      res.status(500).json({ message: 'Something went wrong with database query.' });
-    }
+// @route   POST api/login
+// @desc    Login User / Returning JWT Token
+// @access  Public
 
+router.post('/login', (req, res) => {
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ email }).then(user => {
+    // Check for user
     if (!user) {
-      res.status(401).json(failureDetails);
+      return res.status(404).json({email:'User not found'});
     }
 
-    req.login(user, err => {
-      if (err) return res.status(500).json({ message: 'Something went wrong with login!' });
-      user.passwordHash = undefined;
-      res.status(200).json({ message: 'Login successful!', user });
+    // Check Password
+    bcrypt.compare(password, user.password)
+      .then(isMatch => {
+      if (isMatch) {
+        // User Matched
+        const payload = { id: user.id, email: user.email }; // Create JWT Payload
+
+        // Sign Token
+        jwt.sign(
+          payload,
+          'keys.secretOrKey',
+          { expiresIn: 60 * 60 * 24 }, // 24 Hours
+          (err, token) => {
+            res.json({
+              success: true,
+              token: 'Bearer ' + token
+            });
+          }
+        );
+      } else {
+        return res.status(400).json({password:'Password incorrect'});
+      }
     });
-  })(req, res, next);
+  });
 });
 
-router.post('/logout', routeGuard, (req, res, next) => {
-  req.logout();
-  res.status(200).json({ message: 'Logout successful!' });
-});
+// @route   GET api/isLoggedIn
+// @desc    Return current user
+// @access  Private
 
-router.get('/isLoggedIn', (req, res) => {
-  if (req.user) {
-    req.user.passwordHash = undefined;
-    res.status(200).json({ user: req.user });
-    return;
+router.get(
+  '/isLoggedIn',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    res.json({
+      id: req.user.id,
+      email: req.user.email
+    });
   }
-  res.status(401).json({ message: 'You are not logged in!' });
-});
+);
 
 module.exports = router;

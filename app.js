@@ -1,14 +1,18 @@
 require('dotenv').config();
 
 // const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser'); // not using cookie-parser // used token
 const express = require('express');
-const passportLocal =  require ("passport-local"); // this is on the checklist for Auth Set Up for passport
+// const passportLocal =  require ("passport-local"); // this is on the checklist for Auth Set Up for passport
+const passport = require('passport');
+
 const favicon = require('serve-favicon');
 // const mongoose = require('mongoose');
 const connectMongo = require ("connect-mongo") // do I need this?
 const logger = require('morgan');
 const path = require('path');
+
+const cors = require('cors'); // Library that allows access to the frontend
 
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
@@ -22,12 +26,17 @@ require('./configs/db.config');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(cors());
 
 // make sure express- session is used before the passport
-require('./configs/session.config')(app);
+// require('./configs/session.config')(app); No longer using
 
-require('./configs/passport/passport.config.js')(app);
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport Config
+require('./configs/passport/passport')(passport);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));

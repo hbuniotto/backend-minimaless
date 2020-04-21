@@ -4,10 +4,13 @@ const userSchema = new Schema(
   {
     firstName: String,
     lastName: String,
-    streetAddress: String,
-    cityAddress: String,
-    stateAddress: String,
-    zipAddress: String,
+    address: {
+      streetAddress: String,
+      cityAddress: String,
+      stateAddress: String,
+      zipAddress: String,
+    },
+    phone: Number,
     pictureUrl: String,
     
     email: {
@@ -18,7 +21,7 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true
     },
-    passwordHash: {
+    password: {
       type: String,
       required: [true, 'Password is required.']
     }
@@ -29,3 +32,28 @@ const userSchema = new Schema(
 );
 
 module.exports = model('User', userSchema);
+
+// THIS WILL BE USED WHEN WE VALIDATE ADDRESS
+// STORE USER LOCATION COORDINATES
+
+// users: {
+//   location: {
+//      type: "Point",
+//      coordinates: [-73.856077, 40.848447]
+//   },
+//   name: "Morris Park Bake Shop"
+// }
+
+// {              
+//   geometry: {
+//      type: "Polygon",
+//      coordinates: [[
+//         [ -73.99, 40.75 ],
+//         [ -73.99, 40.75],
+//         ...
+//         [ -73.98, 40.76 ],
+//         [ -73.99, 40.75 ]
+//      ]]
+//    },
+//    name: "Hell's Kitchen"
+// }
