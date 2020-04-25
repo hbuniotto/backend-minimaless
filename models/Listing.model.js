@@ -11,6 +11,10 @@ const ListingSchema = new Schema(
       type: String,
       // required: true
     },
+    description:  {
+      type: String,
+      // required: true
+    },
     size: { // will add a size charge on mouseover
       type: String,
       // required: true,
@@ -56,7 +60,6 @@ const ListingSchema = new Schema(
         "Business", 
         "Casual", 
         "Athleisure", 
-        "Another one"
       ],
       default: "Casual"  
     },  

@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 // const passportLocal =  require ("passport-local"); // this is on the checklist for Auth Set Up for passport
 const passport = require('passport');
+const bodyParser = require('body-parser');
 
 const favicon = require('serve-favicon');
 // const mongoose = require('mongoose');
@@ -24,8 +25,9 @@ require('./configs/db.config');
 
 // Middleware Setup
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // app.use(cookieParser());
 app.use(cors());
 
@@ -54,5 +56,15 @@ app.use('/api', require('./routes/user.routes'));
 app.use('/api', require('./routes/listing.routes'));
 app.use('/api', require('./routes/booking.routes'));
 app.use('/api', require('./routes/authentication.routes'));
+
+// Server static assets if in production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static('client/build'));
+  
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+  }
 
 module.exports = app;

@@ -9,11 +9,10 @@ const Listing = require('../models/Listing.model');
 /// cludinary config file
 
 cloudinary.config({
-    cloud_name: 'minimaless',
-    api_key: '969835716599689',
-    api_secret: '_AO07i9UO2eNgWgeb0COycpuC8k'
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET
 })
-
 
 // @route   GET api/listings
 // @desc    Create post
@@ -40,6 +39,7 @@ router.post('/listings', (req, res) => {
     const newListing = new Listing({
       title: req.body.title,
       brand: req.body.brand,
+      description: req.body.description,
       size: req.body.size,
       condition: req.body.condition,
       category: req.body.category,
@@ -59,7 +59,7 @@ router.post('/listings', (req, res) => {
 
 router.post('/listings/uploadimage',formidable(),(req,res)=>{
   cloudinary.uploader.upload(req.files.file.path,(result)=>{
-      console.log(result);
+      // console.log(result);
       res.status(200).send({
           public_id: result.public_id,
           url: result.url
@@ -79,20 +79,7 @@ router.get('/listings/removeimage',(req,res)=>{
   })
 })
 
-
-
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
 
 // // ROUTES FILE NEEDS TO BE REQUIRED IN THE APP.JS IN ORDER NOT TO GIVE 404
 // // APP NEEDS TO KNOW YOU CREATED A NEW ROUTE FILE, THAT'S THE ONLY WAY FOR IT 
