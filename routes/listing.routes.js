@@ -9,10 +9,11 @@ const Listing = require('../models/Listing.model');
 /// cludinary config file
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET
+    cloud_name: process.env.CLOUDE_NAME,
+    api_key: process.env.CLOUDE_API_KEY,
+    api_secret: process.env.CLOUDE_API_SECRET
 })
+
 
 // @route   GET api/listings
 // @desc    Create post
@@ -20,7 +21,7 @@ cloudinary.config({
 
 router.get('/listings', (req, res) => {
   Listing.find()
-    .sort({ date: -1 })
+    .sort({ date: 1 })
     .then(lists => res.json({
       length: lists.length,
       lists
@@ -52,6 +53,36 @@ router.post('/listings', (req, res) => {
     newListing.save().then(list => res.json(list));
   }
 );
+   
+// @route   PATCH api/listings/:id     
+// @desc    Edit Listing
+// @access  Private
+
+router.patch('/listings/:id', async(req, res) => {
+  try {
+    const listing = await Listing.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+    if (!listing) {
+      return res.status(404).send({msg: 'listing not found'})
+    }
+    res.send(listing)
+  } catch(e) {
+    res.status(400).send(e)
+  }
+});
+
+// @route   DELETE api/listings/:id
+// @desc    Delete post
+// @access  Private
+router.delete('/listings/:id', (req, res) => {
+  Listing.findById(req.params.id)
+      .then(list => {
+        // Delete
+        list.remove().then(() => res.json({ success: true }));
+      })
+      .catch(err => res.status(404).json({ listnotfound: 'No list found' }));
+});
+  
+
 
 ///////////////////////////////////
 //  cloudinarry 
@@ -79,7 +110,29 @@ router.get('/listings/removeimage',(req,res)=>{
   })
 })
 
+router.delete('/deleteimage',(req,res)=>{
+  const imageId = req.query.public_id.split(',');
+  console.log(imageId)
+
+  cloudinary.api.delete_resources(imageId,(error,result)=>{
+    console.log(result)
+      if(error) return res.json({succes:false,error});
+      res.status(200).send('ok');
+  })
+})
+
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
 
 // // ROUTES FILE NEEDS TO BE REQUIRED IN THE APP.JS IN ORDER NOT TO GIVE 404
 // // APP NEEDS TO KNOW YOU CREATED A NEW ROUTE FILE, THAT'S THE ONLY WAY FOR IT 

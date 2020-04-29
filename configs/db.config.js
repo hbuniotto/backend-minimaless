@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
 mongoose
-  .connect('mongodb://localhost/minimaless', {
+  .connect('mongodb://minimaless123:minimaless123@ds211648.mlab.com:11648/minimaless', {
     useCreateIndex: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
-  .then(x => console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`))
-  .catch(err => console.error('Error connecting to mongo', err));
+  .then(x => console.log(`Connected to MongoDB! Database name: "${x.connections[0].name}"`))
+  .catch(err => console.error('Error connecting to MongoDB', err));
