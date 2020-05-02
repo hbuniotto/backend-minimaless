@@ -1,18 +1,13 @@
 const { Router } = require('express');
 const router = new Router();
-
+const passport = require('passport');
 const formidable = require('express-formidable');
 const cloudinary = require('cloudinary');
-
 const Listing = require('../models/Listing.model');
 
 /// cludinary config file
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDE_NAME,
-    api_key: process.env.CLOUDE_API_KEY,
-    api_secret: process.env.CLOUDE_API_SECRET
-})
+
 
 
 // @route   GET api/listings
@@ -35,7 +30,7 @@ router.get('/listings', (req, res) => {
 // @desc    Create post
 // @access  Private
 
-router.post('/listings', (req, res) => {
+router.post('/listings',passport.authenticate('jwt', { session: false }), (req, res) => {
 
     const newListing = new Listing({
       title: req.body.title,
@@ -47,7 +42,8 @@ router.post('/listings', (req, res) => {
       occasion: req.body.occasion,
       color: req.body.color,
       price: req.body.price,
-      images: req.body.images
+      images: req.body.images,
+      owner: req.user.id
     });
 
     newListing.save().then(list => res.json(list));
