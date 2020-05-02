@@ -88,7 +88,7 @@ const ListingSchema = new Schema(
     images:{
         type: Array,
         default:[]
-    }
+    },
   },
   {
     timestamps: true

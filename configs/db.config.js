@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 mongoose
-  .connect('mongodb://minimaless123:minimaless123@ds211648.mlab.com:11648/minimaless', {
+  .connect('mongodb://localhost/minimaless', 
+  {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,

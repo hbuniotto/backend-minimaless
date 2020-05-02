@@ -14,6 +14,7 @@ const logger = require('morgan');
 const path = require('path');
 
 const cors = require('cors'); // Library that allows access to the frontend
+const cloudinary = require('cloudinary');
 
 const app_name = require('./package.json').name;
 const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.')[0]}`);
@@ -46,6 +47,12 @@ app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 // default value for title local
 app.locals.title = 'Express - Generated with IronGenerator';
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDE_NAME,
+  api_key: process.env.CLOUDE_API_KEY,
+  api_secret: process.env.CLOUDE_API_SECRET
+})
+
 // const index = require('./routes/index');
 // app.use('/', index);
 //      |  |  |
@@ -56,6 +63,8 @@ app.use('/api', require('./routes/user.routes'));
 app.use('/api', require('./routes/listing.routes'));
 app.use('/api', require('./routes/booking.routes'));
 app.use('/api', require('./routes/authentication.routes'));
+
+app.use('/api/profile', require('./routes/profile'));
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
