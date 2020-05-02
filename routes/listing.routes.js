@@ -78,8 +78,6 @@ router.delete('/listings/:id', (req, res) => {
       .catch(err => res.status(404).json({ listnotfound: 'No list found' }));
 });
   
-
-
 ///////////////////////////////////
 //  cloudinarry 
 ///////////////////////////////////
