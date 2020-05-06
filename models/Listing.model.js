@@ -89,9 +89,13 @@ const ListingSchema = new Schema(
         type: Array,
         default:[]
     },
-    owner: {
+    user: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User'
+    },
+    profile: {
+      type: Schema.Types.ObjectId,
+      ref: 'Profile'
     },
   },
   {
@@ -99,4 +103,4 @@ const ListingSchema = new Schema(
   }
 );
 
-module.exports = Listing = mongoose.model('listing', ListingSchema);
+module.exports = Listing = mongoose.model('Listing', ListingSchema);

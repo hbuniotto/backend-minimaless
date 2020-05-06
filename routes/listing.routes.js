@@ -8,20 +8,39 @@ const Listing = require('../models/Listing.model');
 /// cludinary config file
 
 
-
+cloudinary.config({
+  cloud_name: process.env.CLOUDE_NAME,
+  api_key: process.env.CLOUDE_API_KEY,
+  api_secret: process.env.CLOUDE_API_SECRET
+})
 
 // @route   GET api/listings
-// @desc    Create post
-// @access  Private
+// @desc    Get List
+// @access  Public
 
 router.get('/listings', (req, res) => {
   Listing.find()
-    .sort({ date: 1 })
+    .populate('user', ['email'])
+    .populate('profile', ['avatar', 'firstName', 'lastName', 'phone', 'email', 'address'])
+    .sort({ createdAt: -1 })
     .then(lists => res.json({
       length: lists.length,
       lists
     }))
     .catch(err => res.status(404).json({ nolistsfound: 'No lists found' }));
+});
+
+// @route   GET api/listings/:id
+// @desc    Get List by id
+// @access  Public
+router.get('/listings/list/:id', (req, res) => {
+  Listing.findById(req.params.id)
+    .populate('user', ['email'])
+    .populate('profile', ['avatar', 'firstName', 'lastName', 'phone', 'email', 'address'])
+    .then(list => res.json(list))
+    .catch(err =>
+      res.status(404).json({ nolistfound: 'No list found with that ID' })
+    );
 });
 
 
@@ -43,7 +62,8 @@ router.post('/listings',passport.authenticate('jwt', { session: false }), (req, 
       color: req.body.color,
       price: req.body.price,
       images: req.body.images,
-      owner: req.user.id
+      user: req.user.id,
+      profile: req.body.profile,
     });
 
     newListing.save().then(list => res.json(list));
@@ -78,6 +98,8 @@ router.delete('/listings/:id', (req, res) => {
       .catch(err => res.status(404).json({ listnotfound: 'No list found' }));
 });
   
+
+
 ///////////////////////////////////
 //  cloudinarry 
 ///////////////////////////////////
@@ -103,6 +125,7 @@ router.get('/listings/removeimage',(req,res)=>{
       res.status(200).send('ok');
   })
 })
+
 
 router.delete('/deleteimage',(req,res)=>{
   const imageId = req.query.public_id.split(',');
